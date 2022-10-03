@@ -19,12 +19,6 @@ namespace CupsAndCakes.Controllers
             return View();
         }
 
-        [Authorize(Roles = IdentityHelper.Customer)]
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
