@@ -1,4 +1,5 @@
 ﻿using CupsAndCakes.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -18,6 +19,7 @@ namespace CupsAndCakes.Controllers
             return View();
         }
 
+        [Authorize(Roles = IdentityHelper.Customer)]
         public IActionResult Privacy()
         {
             return View();
