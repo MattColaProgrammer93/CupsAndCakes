@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using CupsAndCakes.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace CupsAndCakes.Data
@@ -9,5 +10,7 @@ namespace CupsAndCakes.Data
             : base(options)
         {
         }
+
+        public DbSet<Customer> Customers { get; set; }
     }
 }
