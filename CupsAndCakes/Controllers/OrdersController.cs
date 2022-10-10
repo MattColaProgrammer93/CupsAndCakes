@@ -22,7 +22,22 @@ namespace CupsAndCakes.Controllers
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Orders.ToListAsync());
+              List<OrderIndexViewModel> orderData = 
+                    await (from o in _context.Orders
+                              join customer in _context.Customers
+                                on o.Person.Id equals customer.Id
+                              orderby o.Name
+                              select new OrderIndexViewModel()
+                              {
+                                  OrderId = o.Id,
+                                  OrderName = o.Name,
+                                  OrderFlavor = o.Flavor,
+                                  OrderType = o.Type,
+                                  OrderQuantity = o.Quantity,
+                                  CustomerName = customer.FullName
+                              }).ToListAsync();
+
+              return View(orderData);
         }
 
         // GET: Orders/Details/5
@@ -56,11 +71,25 @@ namespace CupsAndCakes.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Flavor,Type,Quantity")] OrderCreateViewModel order)
+        public async Task<IActionResult> Create(OrderCreateViewModel order)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(order);
+                Order newOrder = new()
+                {
+                    Name = order.Name,
+                    Flavor = order.Flavor,
+                    Type = order.Type,
+                    Quantity = order.Quantity,
+                    Person = new Customer()
+                    {
+                        Id = order.ChosenCustomer
+                    }
+                };
+
+                _context.Entry(newOrder.Person).State = EntityState.Unchanged;
+
+                _context.Add(newOrder);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
