@@ -10,6 +10,6 @@ namespace CupsAndCakes.Models
         [Key]
         public int Id { get; set; }
 
-        public int FullName { get; set; }
+        public string FullName { get; set; }
     }
 }
