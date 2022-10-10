@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Policy;
 
 namespace CupsAndCakes.Models
 {
@@ -34,5 +35,27 @@ namespace CupsAndCakes.Models
         /// The customer's order
         /// </summary>
         public Customer Person { get; set; }
+    }
+
+    public class OrderCreateViewModel
+    {
+        [Required]
+        public string Name { get; set; }
+
+        [Required]
+        public string Flavor { get; set; }
+
+        [Required]
+        [Display(Name = "Cake or Cupcake")]
+        public string Type { get; set; }
+
+        [Required]
+        [Range(1, 100)]
+        public int Quantity { get; set; }
+
+        public List<Customer> AllPresentCustomers { get; set; }
+
+
+        public Customer ChosenCustomer { get; set; }
     }
 }

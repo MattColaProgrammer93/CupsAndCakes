@@ -46,7 +46,9 @@ namespace CupsAndCakes.Controllers
         // GET: Orders/Create
         public IActionResult Create()
         {
-            return View();
+            OrderCreateViewModel viewModel = new();
+            viewModel.AllPresentCustomers = _context.Customers.OrderBy(c => c.FullName).ToList();
+            return View(viewModel);
         }
 
         // POST: Orders/Create
@@ -54,7 +56,7 @@ namespace CupsAndCakes.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Flavor,Type,Quantity")] Order order)
+        public async Task<IActionResult> Create([Bind("Id,Name,Flavor,Type,Quantity")] OrderCreateViewModel order)
         {
             if (ModelState.IsValid)
             {
@@ -62,6 +64,7 @@ namespace CupsAndCakes.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            order.AllPresentCustomers = _context.Customers.OrderBy(c => c.FullName).ToList();
             return View(order);
         }
 
