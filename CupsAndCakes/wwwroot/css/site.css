@@ -15,4 +15,18 @@ html {
 
 body {
   margin-bottom: 60px;
+  background-color: lightblue;
+}
+
+table {
+    background-color: white;
+}
+
+title {
+    font-family:Arial;
+}
+
+nav {
+    background-color: #C9F8F7;
+    border-color:dodgerblue;
 }
