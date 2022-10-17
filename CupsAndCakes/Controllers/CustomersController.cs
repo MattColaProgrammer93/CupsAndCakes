@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CupsAndCakes.Data;
 using CupsAndCakes.Models;
+using System.Data.Common;
 
 namespace CupsAndCakes.Controllers
 {
@@ -144,11 +145,17 @@ namespace CupsAndCakes.Controllers
                 return Problem("Entity set 'ApplicationDbContext.Customers'  is null.");
             }
             var customer = await _context.Customers.FindAsync(id);
-            if (customer != null)
-            {
-                _context.Customers.Remove(customer);
-            }
-            
+
+            // Change all related orders to a null customer
+            using DbConnection con = _context.Database.GetDbConnection();
+            await con.OpenAsync();
+            using DbCommand query = con.CreateCommand();
+            query.CommandText = "UPDATE Orders SET PersonId = null WHERE PersonId = " + customer.Id;
+            int rowsAffected = await query.ExecuteNonQueryAsync();
+            TempData["Message"] = $"{customer.FullName} was removed from {rowsAffected} orders";
+
+            // Remove customer
+            _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
