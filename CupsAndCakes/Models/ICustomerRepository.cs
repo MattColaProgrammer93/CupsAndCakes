@@ -1,14 +1,16 @@
 ﻿using CupsAndCakes.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Data.Common;
 
 namespace CupsAndCakes.Models
 {
     public interface ICustomerRepository
     {
-        void SaveCustomer(Customer customer);
-        IEnumerable<Customer> GetAllCustomers();
-        void DeleteCustomer(int customerId);
-        void UpdateCustomer(Customer customer);
-        Customer GetCustomer(int customerId);
+        Task SaveCustomer(Customer customer);
+        Task<IEnumerable<Customer>> GetAllCustomers();
+        Task DeleteCustomer(int customerId);
+        Task UpdateCustomer(Customer customer);
+        Task<Customer> GetCustomer(int customerId);
     }
 
     public class CustomerRepository : ICustomerRepository
@@ -20,31 +22,45 @@ namespace CupsAndCakes.Models
             _context = context;
         }
 
-        public void DeleteCustomer(int customerId)
+        public async Task DeleteCustomer(int customerId)
         {
-            Customer customer = GetCustomer(customerId);
-            _context.Customers.Remove(customer);
-            _context.SaveChanges();
+            Customer? customer = await GetCustomer(customerId);
+
+            if (customer != null)
+            {
+                // Change all related orders to a null customer
+                using DbConnection con = _context.Database.GetDbConnection();
+                await con.OpenAsync();
+                using DbCommand query = con.CreateCommand();
+                query.CommandText = "UPDATE Orders SET PersonId = null WHERE PersonId = " + customer.Id;
+                int rowsAffected = await query.ExecuteNonQueryAsync();
+
+                // Remove customer from database
+                _context.Customers.Remove(customer);
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public IEnumerable<Customer> GetAllCustomers()
+        public async Task<IEnumerable<Customer>> GetAllCustomers()
         {
-            throw new NotImplementedException();
+            return await _context.Customers.OrderBy(customer => customer.FullName).ToListAsync();
         }
 
-        public Customer GetCustomer(int customerId)
+        public async Task<Customer?> GetCustomer(int customerId)
         {
-            return _context.Customers.SingleOrDefault(i => i.Id == customerId);
+            return await _context.Customers.SingleOrDefaultAsync(i => i.Id == customerId);
         }
 
-        public void SaveCustomer(Customer customer)
+        public async Task SaveCustomer(Customer customer)
         {
-            throw new NotImplementedException();
+            _context.Customers.Add(customer);
+            await _context.SaveChangesAsync();
         }
 
-        public void UpdateCustomer(Customer customer)
+        public async Task UpdateCustomer(Customer customer)
         {
-            throw new NotImplementedException();
+            _context.Add(customer);
+            await _context.SaveChangesAsync();
         }
     }
 }
