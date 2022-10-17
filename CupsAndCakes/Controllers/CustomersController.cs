@@ -7,34 +7,34 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CupsAndCakes.Data;
 using CupsAndCakes.Models;
+using System.Data.Common;
 
 namespace CupsAndCakes.Controllers
 {
     public class CustomersController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICustomerRepository _customerRepo;
 
-        public CustomersController(ApplicationDbContext context)
+        public CustomersController(ICustomerRepository customerRepo)
         {
-            _context = context;
+            _customerRepo = customerRepo;
         }
 
         // GET: Customers
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Customers.ToListAsync());
+              return View(await _customerRepo.GetAllCustomers());
         }
 
         // GET: Customers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Customers == null)
+            if (id == null || _customerRepo.GetAllCustomers() == null)
             {
                 return NotFound();
             }
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var customer = await _customerRepo.GetCustomer(id.Value);
             if (customer == null)
             {
                 return NotFound();
@@ -58,8 +58,7 @@ namespace CupsAndCakes.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
+                await _customerRepo.SaveCustomer(customer);
                 return RedirectToAction(nameof(Index));
             }
             return View(customer);
@@ -68,12 +67,12 @@ namespace CupsAndCakes.Controllers
         // GET: Customers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Customers == null)
+            if (id == null || _customerRepo.GetAllCustomers() == null)
             {
                 return NotFound();
             }
 
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _customerRepo.GetCustomer(id.Value);
             if (customer == null)
             {
                 return NotFound();
@@ -97,12 +96,11 @@ namespace CupsAndCakes.Controllers
             {
                 try
                 {
-                    _context.Update(customer);
-                    await _context.SaveChangesAsync();
+                    await _customerRepo.UpdateCustomer(customer);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CustomerExists(customer.Id))
+                    if (!await CustomerExists(customer.Id))
                     {
                         return NotFound();
                     }
@@ -119,13 +117,12 @@ namespace CupsAndCakes.Controllers
         // GET: Customers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Customers == null)
+            if (id == null || _customerRepo.GetAllCustomers() == null)
             {
                 return NotFound();
             }
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var customer = await _customerRepo.GetCustomer(id.Value);
             if (customer == null)
             {
                 return NotFound();
@@ -139,23 +136,22 @@ namespace CupsAndCakes.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Customers == null)
+            if (_customerRepo.GetAllCustomers() == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Customers'  is null.");
             }
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer != null)
-            {
-                _context.Customers.Remove(customer);
-            }
-            
-            await _context.SaveChangesAsync();
+            var customer = await _customerRepo.GetCustomer(id);
+
+            TempData["Message"] = $"{customer.FullName} was removed from related orders";
+
+            // Remove customer
+            await _customerRepo.DeleteCustomer(customer.Id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CustomerExists(int id)
+        private async Task<bool> CustomerExists(int id)
         {
-          return _context.Customers.Any(e => e.Id == id);
+            return await _customerRepo.GetCustomer(id) != null;
         }
     }
 }

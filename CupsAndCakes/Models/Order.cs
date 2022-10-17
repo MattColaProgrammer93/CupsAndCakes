@@ -34,7 +34,7 @@ namespace CupsAndCakes.Models
         /// <summary>
         /// The customer's order
         /// </summary>
-        public Customer Person { get; set; }
+        public Customer? Person { get; set; }
     }
 
     public class OrderCreateViewModel
