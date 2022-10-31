@@ -1,6 +1,10 @@
 # CupsAndCakes
 This website will be written in HTML and C# that shows the orders that the customer has created, and display their orders into the table.
 
+# Sample
+![Cups&CakesHomePage](https://user-images.githubusercontent.com/103535096/199116689-d88e3891-4c22-4daa-95f9-de26107d666a.jpeg)
+
+
 # About this website
 The website will offer customers to make their own custom cupcakes/cakes which will be displayed in the order tables for them to look at.
 
