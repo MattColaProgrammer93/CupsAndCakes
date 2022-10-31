@@ -4,11 +4,17 @@ This website will be written in HTML and C# that shows the orders that the custo
 # About this website
 The website will offer customers to make their own custom cupcakes/cakes which will be displayed in the order tables for them to look at.
 
-# Future Features
+# Features
 - Customers can create/edit/delete their own orders.
 - Orders are displayed in the table.
 - Customers can make their accounts.
-- Much more to come!!
+- Orders are linked to the Customers by their name.
+
+# Future Features
+- If the customer decides to leave, the deleted customer's name and number of orders related
+to the customer will be shown.
+- More styling to the home page.
+- Much more to come!
 
 # The Creator of the Website
 MattColaProgrammer93 - Owner
