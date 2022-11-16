@@ -24,8 +24,8 @@ namespace CupsAndCakes.Models
             var msg = new SendGridMessage()
             {
                 From = new EmailAddress(_config.GetSection("FromEmail").Value, "CupsAndCakes"),
-                Subject = "Testing",
-                PlainTextContent = "This is a test email"
+                Subject = subject,
+                PlainTextContent = content
             };
             msg.AddTo(new EmailAddress("mattchoque115@gmail.com", "Matthew Choque"));
             await client.SendEmailAsync(msg);
