@@ -5,6 +5,14 @@
 }
 
 <h1>Support</h1>
+@if (ViewData["Message"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @ViewData["Message"]
+    </div>
+}
+else
+{
 
 <hr />
 <div class="row">
@@ -22,11 +30,12 @@
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Send Email" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
+}
 
 <div>
     <a asp-action="Index" asp-controller="Home">Back to Home</a>
