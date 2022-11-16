@@ -5,8 +5,7 @@ namespace CupsAndCakes.Models
 {
     public interface IEmailProvider
     {
-        Task SendEmailAsync(string toEmail, string fromEmail, string subject,
-                                string content, string htmlContent);
+        Task SendEmailAsync(string subject, string content);
     }
 
     public class EmailProviderSendGrid : IEmailProvider
@@ -18,16 +17,15 @@ namespace CupsAndCakes.Models
             _config = config;
         }
 
-        public async Task SendEmailAsync(string toEmail, string fromEmail, string subject, string content, string htmlContent)
+        public async Task SendEmailAsync(string subject, string content)
         {
             var apiKey = _config.GetSection("SendGridKey").Value;
             var client = new SendGridClient(apiKey);
             var msg = new SendGridMessage()
             {
                 From = new EmailAddress(_config.GetSection("FromEmail").Value, "CupsAndCakes"),
-                Subject = "Testing",
-                PlainTextContent = "This is a test email",
-                HtmlContent = "<strong>This is a test email</strong>"
+                Subject = subject,
+                PlainTextContent = content
             };
             msg.AddTo(new EmailAddress("mattchoque115@gmail.com", "Matthew Choque"));
             await client.SendEmailAsync(msg);

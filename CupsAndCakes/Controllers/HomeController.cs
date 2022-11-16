@@ -16,9 +16,8 @@ namespace CupsAndCakes.Controllers
             _emailProvider = emailProvider;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            await _emailProvider.SendEmailAsync(null, null, null, null, null);
             return View();
         }
 
@@ -26,6 +25,32 @@ namespace CupsAndCakes.Controllers
         {
             return View();
         }
+
+        // The Support Email
+        [HttpGet]
+        public IActionResult Support()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Support(SupportEmail e)
+        {
+            // Sends email if model is valid
+            if (ModelState.IsValid)
+            {
+                // Send email to sender indentity
+                await _emailProvider.SendEmailAsync(e.Subject, e.Content);
+
+                // Show success message on page
+                ViewData["Message"] = "The email was sent successfully!";
+
+                return View();
+            }
+            
+            return View(e);
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
