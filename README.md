@@ -15,11 +15,5 @@ The website will offer customers to make their own custom cupcakes/cakes which w
 - Orders are linked to the Customers by their name.
 - You can send email to the Support Team!
 
-# Future Features
-- If the customer decides to leave, the deleted customer's name and number of orders related
-to the customer will be shown.
-- More styling to the home page.
-- Much more to come!
-
 # The Developer of Cups&Cakes
 MattColaProgrammer93
