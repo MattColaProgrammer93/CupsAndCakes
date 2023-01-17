@@ -46,3 +46,8 @@ nav {
     background-color: #C9F8F7;
     border-color:dodgerblue;
 }
+
+.email-input {
+    width: 600px;
+    margin-bottom: 10px;
+}
