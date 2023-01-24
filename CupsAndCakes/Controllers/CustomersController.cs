@@ -29,7 +29,7 @@ namespace CupsAndCakes.Controllers
         // GET: Customers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _customerRepo.GetAllCustomers() == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -67,7 +67,7 @@ namespace CupsAndCakes.Controllers
         // GET: Customers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _customerRepo.GetAllCustomers() == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -117,7 +117,7 @@ namespace CupsAndCakes.Controllers
         // GET: Customers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _customerRepo.GetAllCustomers() == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -136,10 +136,6 @@ namespace CupsAndCakes.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_customerRepo.GetAllCustomers() == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Customers'  is null.");
-            }
             var customer = await _customerRepo.GetCustomer(id);
 
             TempData["Message"] = $"{customer.FullName} was removed from related orders";
