@@ -1,6 +1,7 @@
 ﻿using CupsAndCakes.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
+using System.Transactions;
 
 namespace CupsAndCakes.Models
 {
@@ -59,8 +60,14 @@ namespace CupsAndCakes.Models
 
         public async Task UpdateCustomer(Customer customer)
         {
-            _context.Add(customer);
-            await _context.SaveChangesAsync();
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                _context.Database.ExecuteSqlInterpolated($"SET IDENTITY_INSERT dbo.Customers ON;");
+                _context.Update(customer);
+                await _context.SaveChangesAsync();
+                _context.Database.ExecuteSqlInterpolated($"SET IDENTITY_INSERT dbo.Customers OFF");
+                transaction.Commit();
+            }
         }
     }
 }
